@@ -18,7 +18,7 @@ locals {
   tenant_name     = "CloudComp${var.group_number}"
   router_name     = "CloudComp${var.group_number}-router"
   image_name      = "ubuntu-22.04-jammy-server-cloud-image-amd64"
-  flavor_name     = "m1.small"
+  flavor_name     = "m1.medium"
   region_name     = "RegionOne"
   floating_net    = "ext_net"
   dns_nameservers = ["10.33.16.100"]
