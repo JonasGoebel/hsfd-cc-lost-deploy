@@ -1,0 +1,38 @@
+---
+- name: Setup software
+  hosts: all
+  become: true
+  vars:
+    username: "{{ user | default('ubuntu') }}"
+
+  tasks:
+    - name: Install apt packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        update_cache: true
+
+    - name: Install Docker
+      block:
+        - name: Add docker GPG key
+          ansible.builtin.apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+
+        - name: Add docker repository
+          ansible.builtin.apt_repository:
+            repo: deb https://download.docker.com/linux/ubuntu focal stable
+            state: present
+
+        - name: Install Docker (apt)
+          ansible.builtin.apt:
+            name: docker-ce
+            state: present
+            update_cache: true
+
+        - name: Give user rights for docker
+          ansible.builtin.user:
+            name: "{{ username }}"
+            append: true
+            groups: docker

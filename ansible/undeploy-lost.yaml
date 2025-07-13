@@ -1,0 +1,11 @@
+- name: Undeploy Lost Demo
+  hosts: all
+  vars:
+    image_version: "{{ lookup('env', 'IMAGE_VERSION') }}"
+    base_path: "{{ ansible_env.HOME }}/production/lost"
+
+  tasks:
+    - name: Stop docker compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ base_path }}"
+        state: absent
