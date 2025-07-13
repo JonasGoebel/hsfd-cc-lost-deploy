@@ -1,0 +1,62 @@
+name: lost
+
+volumes:
+  app:
+  data:
+  db:
+
+services:
+  traefik:
+    image: traefik:3.4.0
+    command:
+      - "--configFile=/etc/traefik/traefik.yaml"
+    ports:
+      - 80:80
+      - 443:443
+      - 8082:8082
+      - 8090:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yaml:/etc/traefik/traefik.yaml
+      - ./dynamic.yaml:/dynamic.yaml
+      - ./acme.json:/acme.json
+      - ./traefik.log:/traefik.log
+    restart: always
+
+  frontend:
+    image: l3pcv/lost-frontend-test:${LOST_VERSION}
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lost-frontend.rule=Host(`test1.demo.lost.training`)
+      - traefik.http.routers.lost-frontend.entrypoints=websecure
+      - traefik.http.routers.lost-frontend.tls.certresolver=letsencrypt
+
+  backend:
+    image: l3pcv/lost-backend-test:${LOST_VERSION}
+    env_file:
+      - .env
+    volumes:
+      - app:/home/lost/app
+      - data:/home/lost/data
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lost-backend.rule=Host(`test1.demo.lost.training`) && PathPrefix(`/api`)|| Host(`test1.demo.lost.training`) && PathPrefix(`/swaggerui`)
+      - traefik.http.routers.lost-backend.entrypoints=websecure
+      - traefik.http.routers.lost-backend.tls.certresolver=letsencrypt
+      - traefik.http.routers.lost-backend.service=lost-backend
+      - traefik.http.services.lost-backend.loadbalancer.server.port=5000
+
+  db:
+    image: mysql:9.3.0
+    volumes:
+      - db:/var/lib/mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: ${LOST_DB_NAME}
+      MYSQL_USER: ${LOST_DB_USER}
+      MYSQL_PASSWORD: ${LOST_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${LOST_DB_ROOT_PASSWORD}
