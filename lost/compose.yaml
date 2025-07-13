@@ -18,22 +18,20 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yaml:/etc/traefik/traefik.yaml
-      - ./dynamic.yaml:/dynamic.yaml
-      - ./acme.json:/acme.json
       - ./traefik.log:/traefik.log
     restart: always
 
   frontend:
-    image: l3pcv/lost-frontend-test:${LOST_VERSION}
+    image: l3pcv/lost-frontend:${LOST_VERSION}
     restart: always
     labels:
       - traefik.enable=true
-      - traefik.http.routers.lost-frontend.rule=Host(`test1.demo.lost.training`)
+      - traefik.http.routers.lost-frontend.rule=PathPrefix(`/`)
       - traefik.http.routers.lost-frontend.entrypoints=websecure
       - traefik.http.routers.lost-frontend.tls.certresolver=letsencrypt
 
   backend:
-    image: l3pcv/lost-backend-test:${LOST_VERSION}
+    image: l3pcv/lost-backend:${LOST_VERSION}
     env_file:
       - .env
     volumes:
@@ -42,7 +40,7 @@ services:
     restart: always
     labels:
       - traefik.enable=true
-      - traefik.http.routers.lost-backend.rule=Host(`test1.demo.lost.training`) && PathPrefix(`/api`)|| Host(`test1.demo.lost.training`) && PathPrefix(`/swaggerui`)
+      - traefik.http.routers.lost-backend.rule=PathPrefix(`/api`)|| PathPrefix(`/swaggerui`)
       - traefik.http.routers.lost-backend.entrypoints=websecure
       - traefik.http.routers.lost-backend.tls.certresolver=letsencrypt
       - traefik.http.routers.lost-backend.service=lost-backend

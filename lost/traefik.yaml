@@ -1,0 +1,20 @@
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          permanent: false
+          priority: 1
+  websecure:
+    address: ":443"
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+api:
+  dashboard: true
+  insecure: true
+log:
+  filePath: "/traefik.log"
