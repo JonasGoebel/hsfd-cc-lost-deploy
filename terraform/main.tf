@@ -57,7 +57,7 @@ resource "tls_private_key" "ssh_key" {
 }
 
 resource "openstack_compute_keypair_v2" "terraform-keypair" {
-  name       = "bonus-project-pubkey"
+  name       = "lost-demo-pubkey"
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
