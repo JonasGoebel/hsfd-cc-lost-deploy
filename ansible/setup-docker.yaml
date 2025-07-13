@@ -36,3 +36,6 @@
             name: "{{ username }}"
             append: true
             groups: docker
+
+        - name: Reboot the system (to apply group membership)
+          ansible.builtin.reboot:

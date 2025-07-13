@@ -6,27 +6,33 @@
     base_path: "{{ ansible_env.HOME }}/production/lost"
 
   tasks:
+    - name: Create app directory
+      ansible.builtin.file:
+        path: "{{ base_path }}"
+        state: directory
+        mode: "0700"
+        owner: "1000"
+        group: "1000"
+
+    - name: Create empty traefik log file
+      ansible.builtin.file:
+        path: "{{ base_path }}/traefik.log"
+        state: touch
+        mode: "0700"
+        owner: "1000"
+        group: "1000"
+
     - name: Copy deployment files
       ansible.builtin.copy:
-        src: "{{ item }}"
+        src: "../lost/{{ item }}"
         dest: "{{ base_path }}/{{ item }}"
         mode: "0700"
         owner: "1000"
         group: "1000"
       loop:
-        - compose.yaml
         - .env
-
-    - name: Set lost docker image tag
-      when: overwrite_version
-      ansible.builtin.lineinfile:
-        path: "{{ (base_path, '.env') | path_join }}"
-        regexp: "^LOST_VERSION="
-        line: LOST_VERSION={{ image_version }}
-        create: true
-        mode: "0700"
-        owner: "1000"
-        group: "1000"
+        - compose.yaml
+        - traefik.yaml
 
     - name: Start docker compose up
       community.docker.docker_compose_v2:

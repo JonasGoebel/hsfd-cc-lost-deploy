@@ -1,0 +1,6 @@
+all:
+  hosts:
+    lostserver:
+      ansible_host: "{{ lookup('file', '../floating_ip/floating_ip.txt') | trim }}"
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: ./ssh_keys/id_rsa
