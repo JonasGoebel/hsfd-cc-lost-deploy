@@ -67,6 +67,7 @@ resource "local_file" "private_key_pem" {
   file_permission  = "0600"
 }
 
+
 ###########################################################################
 #
 # create security group
@@ -202,4 +203,9 @@ output "private_key_pem" {
   description = "Private SSH Key PEM"
   value       = tls_private_key.ssh_key.private_key_pem
   sensitive   = true
+}
+
+resource "local_file" "floating_ip" {
+  content  = openstack_networking_floatingip_v2.fip_1.address
+  filename = "${path.module}/floating_ip/floating_ip.txt"
 }
