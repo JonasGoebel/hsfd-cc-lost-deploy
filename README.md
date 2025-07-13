@@ -15,6 +15,11 @@ Requirements for the development machine (the pc that sets the whole thing up)
 2. run terraform script
 3. run ansible playbook
 
+### Start Terraform 
+1. cd learn-terraform-docker-container
+2. terraform init
+3. terraform apply
+
 ## What it does
 
 1. Terraform creates a vm on OpenStack (here on the private cloud of HS Fulda)
