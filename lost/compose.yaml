@@ -12,9 +12,6 @@ services:
       - "--configFile=/etc/traefik/traefik.yaml"
     ports:
       - 80:80
-      - 443:443
-      - 8082:8082
-      - 8090:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yaml:/etc/traefik/traefik.yaml
@@ -27,8 +24,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.lost-frontend.rule=PathPrefix(`/`)
-      - traefik.http.routers.lost-frontend.entrypoints=websecure
-      - traefik.http.routers.lost-frontend.tls.certresolver=letsencrypt
+      - traefik.http.routers.lost-frontend.entrypoints=web
 
   backend:
     image: l3pcv/lost-backend:${LOST_VERSION}
@@ -41,8 +37,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.lost-backend.rule=PathPrefix(`/api`)|| PathPrefix(`/swaggerui`)
-      - traefik.http.routers.lost-backend.entrypoints=websecure
-      - traefik.http.routers.lost-backend.tls.certresolver=letsencrypt
+      - traefik.http.routers.lost-backend.entrypoints=web
       - traefik.http.routers.lost-backend.service=lost-backend
       - traefik.http.services.lost-backend.loadbalancer.server.port=5000
 
