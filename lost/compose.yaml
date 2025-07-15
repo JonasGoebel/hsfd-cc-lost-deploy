@@ -53,3 +53,7 @@ services:
       MYSQL_USER: ${LOST_DB_USER}
       MYSQL_PASSWORD: ${LOST_DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${LOST_DB_ROOT_PASSWORD}
+    ulimits:
+      nofile:
+        soft: "65536"
+        hard: "65536"
