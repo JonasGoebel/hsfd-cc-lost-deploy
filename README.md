@@ -94,11 +94,10 @@ Confirm removing the deployment by typing "yes" into the prompt.
 
 ## Scaling LOST
 
-The current setup runs all LOST services (frontend, backend, database, and Traefik) on a single VM. 
+The current setup runs all LOST services (frontend, backend, database, and Traefik) in multiple docker containers inside a single VM. 
 For higher loads or production deployments, you can scale in two ways:
 
-
-1. Horizontal Scaling (More Containers or VMs): 
+1. Horizontal Scaling (more containers per service): 
 
 - Add replicas for the backend service in compose.yaml:
 
@@ -112,11 +111,10 @@ For higher loads or production deployments, you can scale in two ways:
     - Extend the Terraform configuration to create additional instances.
     - Use Docker Swarm or Kubernetes for orchestration.
 
-
-
- 2. Vertical Scaling (Increase VM Resources):
+ 2. Vertical Scaling (Increase VM resources):
+ 
  - Modify the OpenStack flavor in terraform/main.tf: flavor_name = "m1.large"
  - This increases CPU and memory of your VM to handle more concurrent users.
 
-
- For real production environments, consider horizontal scaling with Kubernetes for better resiliency and load balancing.
+The scripts inside this repository are a proof of concept.
+For real production environments, consider running a container orchestrator like Kubernetes on bare metal and apply horizontal scaling for better resiliency and load balancing.
